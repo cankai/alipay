@@ -86,7 +86,7 @@ func RSADecrypt(ciphertext, key []byte) ([]byte, error) {
 }
 
 func SignPKCS1v15(src, key []byte, hash crypto.Hash) ([]byte, error) {
-	var h = hash.New()
+    var h = hash.New()
 	h.Write(src)
 	var hashed = h.Sum(nil)
 
@@ -97,12 +97,13 @@ func SignPKCS1v15(src, key []byte, hash crypto.Hash) ([]byte, error) {
 		return nil, errors.New("private key error")
 	}
 
-	var pri *rsa.PrivateKey
-	pri, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+	privateKey10I, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
 		return nil, err
 	}
-	return rsa.SignPKCS1v15(rand.Reader, pri, hash, hashed)
+	privateKey10 := privateKey10I.(*rsa.PrivateKey)
+	return rsa.SignPKCS1v15(rand.Reader, privateKey10, hash, hashed)
+
 }
 
 func VerifyPKCS1v15(src, sig, key []byte, hash crypto.Hash) error {
